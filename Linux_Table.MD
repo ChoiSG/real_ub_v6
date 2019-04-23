@@ -54,6 +54,7 @@ Updating for UB Lockdown v6 - 4/22/2019
 |----------|------------------------|---------------|
 | Campfire | Data Exfiltration binary | Check environment variable `ERROR_LOGGING` and check if there is a suspicious file `/var/log/systemd-<base64_encoded_string>`. Campfire uses these two to generate ip address and port. If you have found a binary, do a `strings <binary> \| grep "/usr/share/xtables-mul iptables-save"` to confirm it's campfire. | 
 | Goofkit | Rootkit | No one have encountered goofkit in the wild. Thus we have no idea. | 
+| Training Wheels Protocol | Check https://github.com/RITRedteam/TrainingWheelsProtocol | Soon(tm) | 
 
 
 **Not sure where to put this**
