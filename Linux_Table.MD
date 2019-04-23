@@ -45,13 +45,14 @@ Updating for UB Lockdown v6 - 4/22/2019
 |----------|------------------------|---------------|
 | Web | webshell | grep for system/exec in /var/www. If the file seems susp, remove it. |
 | Nginx | Headshot | `nginx -V` looks for modules. If the modules include `--add-module=../` and/or `--user=root`, that means nginx is headshot-backdoored. Backup all configuration files using `tar -czvf "/tmp/nginx_backup.tar.gz" /etc/nginx/ /usr/share/nginx/ /usr/lib/nginx/` and reinstall nginx. |
-| MySql | Trickshot | `mysql -u root -p<password> -e"select * from mysql.func"` and do `strings /usr/lib/mysql/plugin/* \| grep sys_exec_deinit` If sys_exec_deinit exists, that file is trickshot plugin. To remove trickshot, `mysql -u root -p<password> -e"drop function <trickshot_function_name>` and then delete the plugin file (<trickshot>.so) | 
+| MySql | Trickshot | `mysql -u root -p<password> -e"select * from mysql.func"` and do `strings /usr/lib/mysql/plugin/* \| grep sys_exec_deinit` If sys_exec_deinit exists, that file is trickshot plugin. To remove trickshot, `mysql -u root -p<password> -e"drop function <trickshot_function_name>` and then delete the plugin file (<trickshot>.so) |
 | SSH | Backdoored binary | Reinstall ssh |
 
 **MISC**
 
 | Name | Method | How to fix |
 |----------|------------------------|---------------|
+| Campfire | Data Exfiltration binary | Check environment variable `ERROR_LOGGING` and check if there is a suspicious file `/var/log/systemd-<base64_encoded_string>`. Campfire uses these two to generate ip address and port. If you have found a binary, do a `strings <binary> | grep "/usr/share/xtables-mul iptables-save"` to confirm it's campfire. | 
 | Goofkit | Rootkit | No one have encountered goofkit in the wild. Thus we have no idea. | 
 
 
