@@ -75,14 +75,32 @@ cp /usr/bin/* $cc/bin/
 #wget -q https://busybox.net/downloads/binaries/1.30.0-i686/busybox -O $cc/bin/busybox
 #chmod +x $cc/bin/busybox
 
+apt-get -qq purge -y openssh-server
+apt-get -qq install -y openssh-server
+
 # backup configs
 cp ~/.* $cc/old_conf
-cp /etc/ssh/sshd_config /etc/sudoers /etc/pam.d/common-auth $cc/old_conf
+cp /etc/ssh/sshd_config /etc/sudoers /etc/pam.d/common-auth /etc/bash.bashrc $cc/old_conf
 
 # Backup mysql - need more research 
 
 ################# 3. Secure #######################
 
 cp ./.vimrc ~/.vimrc
-cp ./sshd_config /etc/ssh/sshd_config 
-cp ./common-auth /etc/pam.d/common-auth 
+cp ./sudoers /etc/sudoers
+chmod 400 /etc/sudoers
+cp ./sshd_config /etc/ssh/sshd_config
+chmod 644 /etc/ssh/sshd_config
+cp ./common-auth /etc/pam.d/common-auth
+
+
+# Disable cron - Pick one! 
+service cron stop 
+
+# Rev hunter 
+revhunter(){
+    rev='if [ "$(tty)" == "not a tty" ]; then kill -9 $PPID; fi'
+    echo $rev > /bin/rev
+    chmod 755 /bin/rev
+    echo "export PROMPT_COMMAND='/bin/rev'" >> /etc/bash.bashrc
+}
