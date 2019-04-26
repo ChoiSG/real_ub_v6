@@ -32,6 +32,8 @@ echo "Change password of root."
 apt-get install -y zsh 
 chsh -s /bin/zsh root 
 
+echo "Restart the shell or re-ssh into the server"
+
 ################## 1. Init  #################
 
 # Take care of shimmed binaries
@@ -86,6 +88,8 @@ cp /etc/ssh/sshd_config /etc/sudoers /etc/pam.d/common-auth /etc/bash.bashrc $cc
 
 ################# 3. Secure #######################
 
+unalias -a 
+
 cp ./.vimrc ~/.vimrc
 cp ./sudoers /etc/sudoers
 chmod 400 /etc/sudoers
@@ -104,3 +108,7 @@ revhunter(){
     chmod 755 /bin/rev
     echo "export PROMPT_COMMAND='/bin/rev'" >> /etc/bash.bashrc
 }
+
+############ 4. Firewall #############
+
+echo "check the firewall.sh"
