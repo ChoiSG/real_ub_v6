@@ -17,36 +17,12 @@
 #
 # 1. Init - Replacing shimmed binary, changing credentials, setting up HQ, adding backup users
 # 2. Backup - grab configuration files, backup BIN, backup mysql related stuffs 
-# 3. 
-#
-#
-#
+# 3. Secure - Disable cron, reinstalling ssh, overwriting sudoers, sshd_config, pam, revhunter
+# 4. Firewall - iptables rules 
 #
 
 
 #!/bin/bash
-
-# pre-staging 
-echo "Change password of root."
-
-apt-get install -y zsh 
-chsh -s /bin/zsh root 
-
-echo "Restart the shell or re-ssh into the server"
-
-################## 1. Init  #################
-
-# Take care of shimmed binaries
-apt-get install -y --reinstall coreutils net-tools lsof procps build-essential passwd
-
-# Create c2
-cc='/media/floopy'
-mkdir $cc $cc/old_conf $cc/artifacts $cc/bin
-
-# change pass
-read passwd
-getUSERS | xargs -d'\n' -I {} sh -c "echo {}:$passwd | chpasswd"
-
 getUSERS() {
     while IFS=: read a b c
     do
@@ -56,8 +32,34 @@ getUSERS() {
     done < /etc/shadow
 }
 
+
+
+# pre-staging 
+echo "Change password of root."
+
+apt-get -qq install -y --reinstall zsh 
+chsh -s /bin/zsh root 
+
+echo "Restart the shell or re-ssh into the server"
+
+################## 1. Init  #################
+
+# Take care of shimmed binaries
+apt-get -qq install -y --reinstall coreutils net-tools lsof procps passwd
+
+# apt-get -qq install -y --reinstall build-essentials 
+
+# Create c2
+cc='/media/floopy'
+mkdir $cc $cc/old_conf $cc/artifacts $cc/bin
+
+# change pass
+echo -e "Type your new password: "
+read passwd
+getUSERS | xargs -d'\n' -I {} sh -c "echo {}:$passwd | chpasswd"
+
 # Install some tools 
-apt-get install -y --reinstall wget curl vim tree 
+apt-get -qq install -y --reinstall wget curl vim tree 
 
 # Add some backup users 
 useradd campfire
@@ -81,7 +83,7 @@ apt-get -qq purge -y openssh-server
 apt-get -qq install -y openssh-server
 
 # backup configs
-cp ~/.* $cc/old_conf
+cp -r ~/.* $cc/old_conf
 cp /etc/ssh/sshd_config /etc/sudoers /etc/pam.d/common-auth /etc/bash.bashrc $cc/old_conf
 
 # Backup mysql - need more research 
