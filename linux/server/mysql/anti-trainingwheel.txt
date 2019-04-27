@@ -1,0 +1,12 @@
+1. Erase user
+kong, thanos, deadpool, bane, vader, yondu
+
+2. Check bashrc
+
+3. Check sudoers 
+
+4. Check shimmed binaries 
+
+5. Watershell = Check lsof | grep RAW  
+
+

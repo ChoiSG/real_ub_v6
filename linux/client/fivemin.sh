@@ -1,6 +1,6 @@
 #
 # author: choi 
-# Description: 5 min plan for mysql ubuntu 16.04 server 
+# Description: 5 min plan for linux ??? client  
 #
 # Note: UB Lockdown prohibits pre-staged scripts. Thus, all membmers 
 # NEED TO print out all scripts and type them out during the #competition. 
@@ -10,20 +10,21 @@
 # This is also why this script is not modular. This is one long script. For modular
 # five minute plan, check out (https://github.com/ChoiSG/IRSEC_Crack_This/blob/master/debian/darbus)
 #
-# [LATER] tags are to be used "later", since the infrastructure will be 
-# extremely slow. 
+#
 
 
 # Five min plan breaks down to some parts. 
 #
 # 1. Init - Replacing shimmed binary, changing credentials, setting up HQ, adding backup users
 # 2. Backup - grab configuration files, backup BIN, backup mysql related stuffs 
-# 3. Secure - Disable cron, reinstalling ssh, overwriting sudoers, sshd_config, pam, revhunter
-# 4. Firewall - iptables rules 
+# 3. secure  
+# 4. Firewall - firing off iptables 
+#
+#
 #
 
-
 #!/bin/bash
+
 getUSERS() {
     while IFS=: read a b c
     do
@@ -38,7 +39,7 @@ getUSERS() {
 # pre-staging 
 echo "Change password of root."
 
-apt-get -qq install -y --reinstall zsh 
+apt-get install -y zsh 
 chsh -s /bin/zsh root 
 
 echo "Restart the shell or re-ssh into the server"
@@ -46,21 +47,18 @@ echo "Restart the shell or re-ssh into the server"
 ################## 1. Init  #################
 
 # Take care of shimmed binaries
-apt-get -qq install -y --reinstall coreutils net-tools lsof procps passwd
-
-# apt-get -qq install -y --reinstall build-essentials 
+apt-get install -y --reinstall coreutils net-tools lsof procps build-essential passwd
 
 # Create c2
 cc='/media/floopy'
 mkdir $cc $cc/old_conf $cc/artifacts $cc/bin
 
 # change pass
-echo -e "Type your new password: "
 read passwd
 getUSERS | xargs -d'\n' -I {} sh -c "echo {}:$passwd | chpasswd"
 
 # Install some tools 
-apt-get -qq install -y --reinstall wget curl vim tree 
+apt-get install -y --reinstall wget curl vim tree 
 
 # Add some backup users 
 useradd campfire
@@ -73,20 +71,18 @@ usermod -aG sudo headshot
 
 
 ################### 2. Backup ########################
-# [LATER] backup binaries 
-#cp /bin/* $cc/bin/
-#cp /usr/bin/* $cc/bin/
+# backup binaries 
+cp /bin/* $cc/bin/
+cp /usr/bin/* $cc/bin/
 
-# [LATER] download busybox
 #wget -q https://busybox.net/downloads/binaries/1.30.0-i686/busybox -O $cc/bin/busybox
 #chmod +x $cc/bin/busybox
 
-# [LATER] Reinstall ssh  
-#apt-get -qq purge -y openssh-server
-#apt-get -qq install -y openssh-server
+apt-get -qq purge -y openssh-server
+apt-get -qq install -y openssh-server
 
 # backup configs
-cp -r ~/.* $cc/old_conf
+cp ~/.* $cc/old_conf
 cp /etc/ssh/sshd_config /etc/sudoers /etc/pam.d/common-auth /etc/bash.bashrc $cc/old_conf
 
 # Backup mysql - need more research 
